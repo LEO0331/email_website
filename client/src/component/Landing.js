@@ -3,11 +3,10 @@ import React from 'react';
 const Landing = () => {
 	return (
 		<div className="center-align">
-	    	<h1>Emaily</h1>
-	    	<h2>Collect feedback from users!</h2>	
-    	</div>
+	    		<h3>Collect feedback from users!</h3>
+	    		<p>Please click the top left Emaily icon to start our service</p>	
+    		</div>
 	);
 };
 
 export default Landing;
-//<div style={{textAlign: 'center'}}> fisrt:pass JS/Second:actual obj passing in -> text-align: center in CSS
