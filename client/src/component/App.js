@@ -9,7 +9,7 @@ import Dashboard from './Dashboard';
 import SurveyNew from './SurveyNew';
 
 class App extends Component {
-  componentDidMount(){ //進行實例化網路請求:AJAX
+  componentDidMount(){ //AJAX
     this.props.fetchUser();
   }
 
