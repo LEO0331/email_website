@@ -10,6 +10,8 @@ import reduxThunk from 'redux-thunk';
 import axios from 'axios'; 
 window.axios = axios;
 //https://www.redux.org.cn/docs/introduction/ThreePrinciples.html
+//const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+//const store = createStore(reducer, {}, composeEnhancer(applyMiddleware(reduxThunk)));
 const store = createStore(reducer, {}, applyMiddleware(reduxThunk));
 //The <Provider> component makes the Redux store available to any nested components that need to access the Redux store
 ReactDOM.render(
