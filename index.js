@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieSession = require('cookie-session'); //cookie to manage passport
 const passport = require('passport');
+const validateEnv = require('./config/validateEnv');
+validateEnv();
 const keys = require('./config/keys'); 
 require('./models/User'); //order matters
 require('./models/Survey');

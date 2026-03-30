@@ -1,2 +1,5 @@
 node_modules
-dev.js
+.env
+.env.*
+!.env.example
+!client/.env.example
