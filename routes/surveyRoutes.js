@@ -23,13 +23,18 @@ module.exports = app => {
 		const p = new Path('/api/surveys/:surveyId/:choice');
 		_.chain(req.body)
 			.map(({email, url}) => { 
-				const match = p.test(new URL(url).pathname);
+				let match = null;
+				try {
+					match = p.test(new URL(url).pathname);
+				} catch (error) {
+					return null;
+				}
 				if (match){
 					return {email, surveyId: match.surveyId, choice: match.choice}
 				}
 			})
 			.compact() //remove undefined elements after mapping
-			.uniqBy('email', 'surveyId')
+			.uniqBy(({email, surveyId}) => `${email}:${surveyId}`)
 			.each(({surveyId,email,choice}) => { //update record in db
 	      		Survey.updateOne({
 	         		_id: surveyId,

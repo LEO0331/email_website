@@ -8,7 +8,7 @@ class SurveyList extends Component{
   	}
 
   	renderSurvey(){ //from db, id in mongoose should be _id; Date().toString()
-  		return this.props.surveys.reverse().map(survey => { //newest on the top
+  		return [...this.props.surveys].reverse().map(survey => { //newest on the top
   			return(
   				<div key={survey._id} className="card blue-grey">
         			<div className="card-content white-text">
