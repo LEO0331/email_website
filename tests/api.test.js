@@ -1,4 +1,4 @@
-describe('Backend API', () => {
+﻿describe('Backend API', () => {
   test('registers /api/health route and responds with service status', () => {
     const routes = {};
     const app = {
@@ -80,6 +80,7 @@ describe('Backend API', () => {
 
   test('surveyTemplate uses DOMAIN when provided', () => {
     process.env.DOMAIN = 'https://example.com';
+    delete process.env.APP_BASE_URL;
     const surveyTemplate = require('../services/surveyTemplate');
 
     const html = surveyTemplate({
@@ -91,5 +92,31 @@ describe('Backend API', () => {
 
     expect(html).toContain('https://example.com/api/surveys/123/yes');
     expect(html).toContain('https://example.com/api/surveys/123/no');
+  });
+
+  test('surveyTemplate falls back to APP_BASE_URL', () => {
+    delete process.env.DOMAIN;
+    process.env.APP_BASE_URL = 'https://preview.example.com';
+    const surveyTemplate = require('../services/surveyTemplate');
+
+    const html = surveyTemplate({
+      body: 'Body',
+      id: '456',
+    });
+
+    expect(html).toContain('https://preview.example.com/api/surveys/456/yes');
+  });
+
+  test('surveyTemplate defaults to localhost when no env is set', () => {
+    delete process.env.DOMAIN;
+    delete process.env.APP_BASE_URL;
+    const surveyTemplate = require('../services/surveyTemplate');
+
+    const html = surveyTemplate({
+      body: 'Body',
+      id: '789',
+    });
+
+    expect(html).toContain('http://localhost:5000/api/surveys/789/no');
   });
 });
