@@ -14,10 +14,11 @@ class Header extends Component{
 					</li>
 				);
 			default:
-				return [ //https://flaviocopes.com/jsx-return-multiple-elements/
-					<li key="1" className="nav-credits">Signed in</li>,
-					<li key="2"><Link className="nav-link" to="/logout">Logout</Link></li>
-				];
+				return (
+					<li>
+						<Link className="nav-link" to="/logout">Logout</Link>
+					</li>
+				);
 		}
 	}
 
