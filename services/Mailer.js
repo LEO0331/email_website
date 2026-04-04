@@ -1,49 +1,36 @@
-//capital cuz export a class
-const sendgrid = require('sendgrid');
-const helper = sendgrid.mail; //const {mail} = sendgrid; mail property
-const keys = require('../config/keys');
-//https://github.com/sendgrid/sendgrid-nodejs/blob/f94a3924db7fd1380a341af1903955f5c526d0ba/packages/mail/USE_CASES.md
-class Mailer extends helper.Mail{ //Mail object with html used inside the email body
-	constructor({subject, recipients}, content){ //content: a html string
-		super(); //Mail class
-		this.sgApi = sendgrid(keys.sendGridKey);
-		this.from_email = new helper.Email(process.env.MAIL_FROM || 'noreply@example.com'); 
+const { Resend } = require('resend');
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+class Mailer {
+	constructor({ subject, recipients }, htmlContent) {
 		this.subject = subject;
-		this.body = new helper.Content('text/html', content);
-		this.recipients = this.formatAddresses(recipients);
-		this.addContent(this.body); //inbuilt from helper base
-		this.addClickTracking(); 
-		this.addRecipients();
+		this.recipients = recipients; // Array of email strings
+		this.htmlContent = htmlContent;
+		this.from = process.env.MAIL_FROM || 'noreply@example.com';
 	}
-	formatAddresses(recipients){ //need () to do destructure with arrow func
-		return recipients.map(({email}) => {
-			return new helper.Email(email);
-		});
-	}
-	addClickTracking(){
-		const trackingSettings = new helper.TrackingSettings();
-		const clickTracking = new helper.ClickTracking(true, true);
-		trackingSettings.setClickTracking(clickTracking);
-		this.addTrackingSettings(trackingSettings);
-	}
-	addRecipients(){
-		const personalize = new helper.Personalization();
-		this.recipients.forEach(recipient => { //recipient model with helper.Email
-			personalize.addTo(recipient);
-		});
-		this.addPersonalization(personalize);
-	}
-	async send(){
-		try{
-			const request = this.sgApi.emptyRequest({
-				method: 'POST',
-				path: '/v3/mail/send',
-				body: this.toJSON()
+
+	async send() {
+		// Skip if no API key configured
+		if (!process.env.RESEND_API_KEY) {
+			console.log('Resend API key not configured. Email not sent.');
+			return { success: false, message: 'Email service not configured' };
+		}
+
+		try {
+			// Send email to all recipients
+			const response = await resend.emails.send({
+				from: this.from,
+				to: this.recipients,
+				subject: this.subject,
+				html: this.htmlContent,
 			});
-			const response = await this.sgApi.API(request);
+
+			console.log('Email sent successfully:', response);
 			return response;
-		}catch(error){
-			console.log('error', error.response.body);
+		} catch (error) {
+			console.error('Error sending email:', error);
+			throw error;
 		}
 	}
 }
