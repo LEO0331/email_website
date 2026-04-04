@@ -1,4 +1,7 @@
 ﻿# Emaily (Backend + Client)
+[![Deploy](https://github.com/LEO0331/email_website/actions/workflows/deploy.yml/badge.svg)](https://github.com/LEO0331/email_website/actions/workflows/deploy.yml)
+
+Live demo: [https://email-website-hp5dpyaiw-leo0331s-projects.vercel.app/](https://email-website-hp5dpyaiw-leo0331s-projects.vercel.app/)
 
 Survey email app with:
 - Node/Express backend
@@ -7,8 +10,8 @@ Survey email app with:
 
 ## Requirements
 
-- Node.js `18.x`
-- npm `7+`
+- Node.js `24.x`
+- npm `11.x`
 - Vercel account
 
 ## Local Development
@@ -44,11 +47,14 @@ PORT=5000
 DOMAIN=https://your-vercel-domain.vercel.app
 RESEND_API_KEY=your_resend_api_key
 MAIL_FROM=Your App <noreply@yourdomain.com>
+EMAIL_RATE_LIMIT_MAX=5
+EMAIL_RATE_LIMIT_WINDOW_MS=60000
 ```
 
 Notes:
 - `RESEND_API_KEY` is optional. If missing, API routes still work but emails are skipped.
 - `DOMAIN` is used in generated survey links.
+- `EMAIL_RATE_LIMIT_MAX` and `EMAIL_RATE_LIMIT_WINDOW_MS` are optional and control email endpoint throttling.
 
 ## Deploy Backend to Vercel (Manual)
 
@@ -83,6 +89,10 @@ Set repository secrets:
 - `VERCEL_PROJECT_ID`
 
 Then push to `main` (or `master`).
+
+Note:
+- Deployed app URLs come from Vercel (`*.vercel.app`), not GitHub Pages (`github.io`).
+- GitHub Actions is only the CI/CD trigger to deploy into Vercel.
 
 ## Troubleshooting
 

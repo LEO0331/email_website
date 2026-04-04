@@ -25,11 +25,11 @@ class Header extends Component{
 		return(
 			<nav className="site-nav">
     			<div className="nav-wrapper">
-	      			<Link to={this.props.auth ? '/surveys' : '/'} className="left brand-logo brand-mark">
+	      			<Link to={this.props.auth ? '/surveys' : '/'} className="brand-logo brand-mark">
 	      				<span className="brand-pulse" aria-hidden="true"></span>
 	      				<span>Emaily</span>
 	      			</Link>
-	      			<ul className="right nav-menu">
+	      			<ul className="nav-menu">
 	        			{this.renderContent()}
 	      			</ul>
     			</div>
