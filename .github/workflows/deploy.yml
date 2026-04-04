@@ -7,7 +7,7 @@ on:
       - master
 
 jobs:
-  deploy:
+  test-and-build:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,6 +23,44 @@ jobs:
 
       - name: Install client dependencies
         run: npm install --prefix client
+
+      - name: Run security audit (backend)
+        run: npm audit --audit-level=moderate
+        continue-on-error: true
+
+      - name: Run security audit (client)
+        run: npm audit --prefix client --audit-level=moderate
+        continue-on-error: true
+
+      - name: Run client tests
+        run: npm test --prefix client -- --coverage --watchAll=false
+        continue-on-error: true
+
+      - name: Build client
+        run: npm run build --prefix client
+
+      - name: Verify build output
+        run: |
+          if [ ! -d "client/build" ]; then
+            echo "Build failed: client/build directory not found"
+            exit 1
+          fi
+
+  deploy:
+    needs: test-and-build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install && npm install --prefix client
 
       - name: Build client
         run: npm run build --prefix client
