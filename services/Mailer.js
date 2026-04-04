@@ -1,7 +1,5 @@
 const { Resend } = require('resend');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 class Mailer {
 	constructor({ subject, recipients }, htmlContent) {
 		this.subject = subject;
@@ -18,6 +16,8 @@ class Mailer {
 		}
 
 		try {
+			const resend = new Resend(process.env.RESEND_API_KEY);
+
 			// Send email to all recipients
 			const response = await resend.emails.send({
 				from: this.from,
