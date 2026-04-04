@@ -4,7 +4,7 @@
     jest.clearAllMocks();
   });
 
-  test('registers current user, login, and logout routes', () => {
+  test('registers current user, login, and logout routes with cookie session', () => {
     const routes = {};
     const app = {
       get: jest.fn((path, handler) => {
@@ -12,31 +12,35 @@
       }),
     };
 
-    const getCurrentUser = jest.fn(() => ({ id: 'demo-user' }));
-    const loginDemoUser = jest.fn();
-    const logoutDemoUser = jest.fn();
-
-    jest.isolateModules(() => {
-      jest.doMock('../services/demoStore', () => ({
-        getCurrentUser,
-        loginDemoUser,
-        logoutDemoUser,
-      }));
-      require('../routes/authRoutes')(app);
-    });
+    require('../routes/authRoutes')(app);
 
     const currentRes = { send: jest.fn() };
-    routes['/api/current_user']({}, currentRes);
-    expect(currentRes.send).toHaveBeenCalledWith({ id: 'demo-user' });
+    routes['/api/current_user']({ headers: {} }, currentRes);
+    expect(currentRes.send).toHaveBeenCalledWith(false);
 
-    const loginRes = { redirect: jest.fn() };
+    const authedRes = { send: jest.fn() };
+    routes['/api/current_user']({ headers: { cookie: 'demo_auth=1' } }, authedRes);
+    expect(authedRes.send).toHaveBeenCalledWith({
+      id: 'demo-user',
+      name: 'Demo User',
+      credits: 5,
+    });
+
+    const loginRes = { cookie: jest.fn(), redirect: jest.fn() };
     routes['/auth/google']({}, loginRes);
-    expect(loginDemoUser).toHaveBeenCalledTimes(1);
+    expect(loginRes.cookie).toHaveBeenCalledWith(
+      'demo_auth',
+      '1',
+      expect.objectContaining({
+        httpOnly: true,
+        sameSite: 'lax',
+      })
+    );
     expect(loginRes.redirect).toHaveBeenCalledWith('/surveys');
 
-    const logoutRes = { redirect: jest.fn() };
+    const logoutRes = { clearCookie: jest.fn(), redirect: jest.fn() };
     routes['/api/logout']({}, logoutRes);
-    expect(logoutDemoUser).toHaveBeenCalledTimes(1);
+    expect(logoutRes.clearCookie).toHaveBeenCalledWith('demo_auth');
     expect(logoutRes.redirect).toHaveBeenCalledWith('/signin');
   });
 });
