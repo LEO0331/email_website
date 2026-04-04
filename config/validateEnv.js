@@ -1,12 +1,5 @@
 const REQUIRED_ENV_VARS = [
-	'GOOGLE_CLIENT_ID',
-	'GOOGLE_CLIENT_SECRET',
-	'MONGO_URI',
-	'COOKIE_KEY',
-	'STRIPE_PUBLISHABLE_KEY',
-	'STRIPE_SECRET_KEY',
-	'SEND_GRID_KEY',
-	'DOMAIN'
+	// No required vars for demo
 ];
 
 module.exports = function validateEnv() {

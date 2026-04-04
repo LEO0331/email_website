@@ -7,7 +7,7 @@ class Mailer extends helper.Mail{ //Mail object with html used inside the email 
 	constructor({subject, recipients}, content){ //content: a html string
 		super(); //Mail class
 		this.sgApi = sendgrid(keys.sendGridKey);
-		this.from_email = new helper.Email('a840331a840331@gmail.com'); 
+		this.from_email = new helper.Email(process.env.MAIL_FROM || 'noreply@example.com'); 
 		this.subject = subject;
 		this.body = new helper.Content('text/html', content);
 		this.recipients = this.formatAddresses(recipients);

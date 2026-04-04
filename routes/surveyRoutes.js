@@ -2,16 +2,14 @@ var _ = require('lodash');
 global._ = _; //When doing ._ calls lodash, defined globally
 const {Path} = require('path-parser'); //const Path = require('path-parser').default;
 const {URL} = require('url');
-const requireLogin = require('../middlewares/requireLogin');
-const requireCredits = require('../middlewares/requireCredits');
-const mongoose = require('mongoose'); //https://mongoosejs.com/docs/guide.html
 const Mailer = require('../services/Mailer');
 const surveyTemplate = require('../services/surveyTemplate');
-const Survey = mongoose.model('surveys');
+const Survey = require('../models/Survey');
+const { updateSurveyVotes, getRecipientByEmailAndSurvey, updateRecipientResponded } = require('../config/db');
 
 module.exports = app => {
-	app.get('/api/surveys/', requireLogin, async (req, res) => { //fetch user survey and put them on dashboard; reach out db is an async request
-		const surveys = await Survey.find({_user: req.user.id}).select({recipients: false}); //select specific data
+	app.get('/api/surveys/', async (req, res) => { //fetch all surveys
+		const surveys = Survey.find();
 		res.send(surveys);
 	});
 
@@ -36,42 +34,36 @@ module.exports = app => {
 			.compact() //remove undefined elements after mapping
 			.uniqBy(({email, surveyId}) => `${email}:${surveyId}`)
 			.each(({surveyId,email,choice}) => { //update record in db
-	      		Survey.updateOne({
-	         		_id: surveyId,
-	         		recipients: {
-	            		$elemMatch: {email: email, responded: false}
-	        		}}, {
-	            		$inc :  {[choice] :  1},
-	            		$set: {'recipients.$.responded' : true},
-	            		lastResponded: new Date() //$currentDate: { lastResponded: true }
-	        		}
-	        	).exec();
+				const recipient = getRecipientByEmailAndSurvey.get(email, surveyId);
+				if (recipient && !recipient.responded) {
+					updateRecipientResponded.run(recipient.id);
+					Survey.updateVotes(surveyId, choice);
+				}
 	   		})
 			.value();
 		res.send({});
 	});
 
-	app.post('/api/surveys', requireLogin, requireCredits, async (req, res) => {
+	app.post('/api/surveys', async (req, res) => {
 		const {title, subject, body, recipients} = req.body;
-		const survey = new Survey({ //new instance of survey
-			title, //title: title
+		const recipientsArray = recipients.split(',').map(email => email.trim());
+		const survey = Survey.create({ //new instance of survey
+			title,
 			subject,
 			body,
-			recipients: recipients.split(',').map(email => ({email: email.trim()})),
-			_user: req.user.id, //generate auto on mongoose model
-			dateSent: Date.now()
+			recipients: recipientsArray
 		});
-		//Mailer(subject/recipients, content/body of the email in html)
-		const mailer = new Mailer(survey, surveyTemplate(survey)); //send an email
-		try {
-      		await mailer.send();
-      		await survey.save();
-      		req.user.credits -= 1;
-      		const user = await req.user.save();
-      		res.send(user);
-    	} catch (error) {
-      		res.status(422).send(error);
-    	}
+		// Optionally send email
+		const sendEmail = process.env.SEND_EMAIL === 'true';
+		if (sendEmail) {
+			const mailer = new Mailer(survey, surveyTemplate(survey)); //send an email
+			try {
+				await mailer.send();
+			} catch (error) {
+				console.error('Error sending email:', error);
+			}
+		}
+		res.send(survey);
 	});
 };
 
