@@ -1,8 +1,6 @@
 ﻿# Emaily (Backend + Client)
 [![Deploy](https://github.com/LEO0331/email_website/actions/workflows/deploy.yml/badge.svg)](https://github.com/LEO0331/email_website/actions/workflows/deploy.yml)
 
-Live demo: [https://email-website-hp5dpyaiw-leo0331s-projects.vercel.app/](https://email-website-hp5dpyaiw-leo0331s-projects.vercel.app/)
-
 Survey email app with:
 - Node/Express backend
 - React frontend (CRA) in `client/`
@@ -114,3 +112,55 @@ Check that these GitHub secrets exist and are correct:
 - `VERCEL_TOKEN`
 - `VERCEL_ORG_ID`
 - `VERCEL_PROJECT_ID`
+
+---
+
+## 🚀 Demo Flow
+
+### 1. Sign In
+- Start with the demo authentication flow.
+- Once authenticated, you land on the survey dashboard.
+
+### 2. Create a Survey
+- Fill in **title, subject, body, and recipients**.
+- On submit:
+  - Backend validates inputs.
+  - Rate limiting is applied for safety.
+  - Survey record is created.
+  - If `RESEND_API_KEY` is configured, emails are sent via Resend.
+  - If not, the app still runs safely in demo mode.
+
+### 3. View Surveys
+- Surveys are listed with metadata:
+  - Send date
+  - Response counters
+- Provides a quick operational view without extra complexity.
+
+### 4. Log Out
+- Clears the demo session.
+- Returns to the sign‑in page.
+
+---
+
+## 🛠️ Tech Stack
+- **Frontend**: React
+- **Backend**: Express
+- **Deployment**: Vercel
+- **CI/CD**: GitHub Actions
+- **Mailer**: Resend (optional)
+
+---
+
+## ✅ Verification
+- Strong backend test coverage.
+- Guards for production readiness.
+- Demo‑ready and extensible beyond mock UI.
+
+---
+
+## 📦 Development
+```bash
+npm install
+npm run dev
+npm run test
+
