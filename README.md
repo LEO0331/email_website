@@ -1,4 +1,4 @@
-# Emaily (Backend + Client)
+﻿# Emaily (Backend + Client)
 
 Survey email app with:
 - Node/Express backend
@@ -8,8 +8,8 @@ Survey email app with:
 ## Requirements
 
 - Node.js `18.x`
-- npm `7+` (project was originally pinned to npm `7.5.4`)
-- Heroku account + app
+- npm `7+`
+- Vercel account
 
 ## Local Development
 
@@ -41,7 +41,7 @@ Create `.env` in project root:
 
 ```env
 PORT=5000
-DOMAIN=https://your-app-name.herokuapp.com
+DOMAIN=https://your-vercel-domain.vercel.app
 RESEND_API_KEY=your_resend_api_key
 MAIL_FROM=Your App <noreply@yourdomain.com>
 ```
@@ -50,35 +50,37 @@ Notes:
 - `RESEND_API_KEY` is optional. If missing, API routes still work but emails are skipped.
 - `DOMAIN` is used in generated survey links.
 
-## Deploy to Heroku (Manual)
+## Deploy Backend to Vercel (Manual)
 
 1. Install and login:
    ```bash
-   heroku login
+   npm i -g vercel
+   vercel login
    ```
-2. Create app:
+2. Link the repo to a Vercel project (first run only):
    ```bash
-   heroku create your-app-name
+   vercel
    ```
-3. Set config vars:
+3. Add project environment variables in Vercel Dashboard:
+   - `DOMAIN`
+   - `RESEND_API_KEY` (optional)
+   - `MAIL_FROM` (optional)
+4. Deploy production:
    ```bash
-   heroku config:set DOMAIN=https://your-app-name.herokuapp.com --app your-app-name
-   heroku config:set RESEND_API_KEY=your_resend_api_key --app your-app-name
-   heroku config:set MAIL_FROM="Your App <noreply@yourdomain.com>" --app your-app-name
-   ```
-4. Deploy:
-   ```bash
-   git push heroku main
+   vercel --prod
    ```
 5. Verify:
-   - Health: `https://your-app-name.herokuapp.com/api/health`
+   - Health endpoint: `https://your-vercel-domain.vercel.app/api/health`
 
-## Deploy via GitHub Actions
+## Deploy via GitHub Actions (Vercel)
+
+Workflow file:
+- [deploy.yml](C:/Users/LeoLi/Documents/email_website/.github/workflows/deploy.yml)
 
 Set repository secrets:
-- `HEROKU_API_KEY`
-- `HEROKU_APP_NAME`
-- `HEROKU_EMAIL`
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
 
 Then push to `main` (or `master`).
 
@@ -97,8 +99,8 @@ npm install --prefix client --legacy-peer-deps
 Do not upgrade root Jest beyond CRA-compatible version. Root is pinned to:
 - `jest@26.6.0`
 
-### GitHub Action fails with `heroku: not found`
-Ensure workflow includes Heroku CLI install step before deploy.
-
-### Action log shows `heroku create  --buildpack ...` (blank app name)
-`HEROKU_APP_NAME` secret is missing or empty. Set it in GitHub repository secrets.
+### Vercel deploy via GitHub Actions fails early
+Check that these GitHub secrets exist and are correct:
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
