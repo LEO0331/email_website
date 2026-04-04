@@ -17,15 +17,17 @@ class SurveyForm extends Component { //a form for user to input
 	//https://zh-hant.reactjs.org/docs/forms.html
 	render(){
 		return (
-			<div> 
-				<form onSubmit={this.props.handleSubmit(this.props.onSurveySubmit)}>
+			<div className="survey-form-wrap"> 
+				<form className="survey-form" onSubmit={this.props.handleSubmit(this.props.onSurveySubmit)}>
 	    			{this.renderFields()}
-	    			<Link to="/surveys" className="red waves-effect waves-teal btn">Cancel
+	    			<div className="form-actions">
+	    				<Link to="/surveys" className="btn-flat action-cancel">Cancel
 	    				<i className="material-icons right">cancel</i>
-	    			</Link>
-	    			<button type="submit" className="btn waves-effect waves-light right">Next
+	    				</Link>
+	    				<button type="submit" className="btn action-next">Next
 	    				<i className="material-icons right">done</i>
-	    			</button>
+	    				</button>
+	    			</div>
 	    		</form>	
     		</div>
 		);

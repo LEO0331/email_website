@@ -2,10 +2,10 @@ import React from 'react'; //label and text inputs
 //touched: user clicked; meta property: an Obj contains properties after submit
 const SurveyField = ({input, label, meta: {touched, error}}) => { //input contains callbacks generated auto by redux-form <Field>
 	return (
-		<div>
-			<label>{label}</label>
-	    	<input {...input} placeholder={label} style={{marginBottom: '2px'}} />
-	    	<div className="red-text" style={{marginBottom: '15px'}}>
+		<div className="field-block">
+			<label className="field-label">{label}</label>
+	    	<input {...input} className="field-input" placeholder={label} />
+	    	<div className="field-error">
 	    		{touched && error}
 	    	</div>
     	</div>

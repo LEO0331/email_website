@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
-import Payments from './Payments';
 
 class Header extends Component{
 	renderContent(){
@@ -9,24 +8,28 @@ class Header extends Component{
 			case null:
 				return;
 			case false:
-				return <li><a href="/auth/google">Login with Google</a></li>;
+				return (
+					<li>
+						<a className="nav-link nav-cta" href="/auth/google">Login with Google</a>
+					</li>
+				);
 			default:
 				return [ //https://flaviocopes.com/jsx-return-multiple-elements/
-					<li key="1"><Payments /></li>,
-					<li key="2" style={{margin: '0 8px'}}>Credits: {this.props.auth.credits}</li>,
-					<li key="3"><a href="/api/logout">Logout</a></li>
+					<li key="1" className="nav-credits">Signed in</li>,
+					<li key="2"><a className="nav-link" href="/api/logout">Logout</a></li>
 				];
 		}
 	}
 
 	render(){
 		return(
-			<nav>
+			<nav className="site-nav">
     			<div className="nav-wrapper">
-	      			<Link to={this.props.auth ? '/surveys' : '/'} className="left brand-logo">
-	      			Emaily
+	      			<Link to={this.props.auth ? '/surveys' : '/'} className="left brand-logo brand-mark">
+	      				<span className="brand-pulse" aria-hidden="true"></span>
+	      				<span>Emaily</span>
 	      			</Link>
-	      			<ul className="right hide-on-med-and-down">
+	      			<ul className="right nav-menu">
 	        			{this.renderContent()}
 	      			</ul>
     			</div>

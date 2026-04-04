@@ -1,5 +1,6 @@
-const keys = require('../config/keys');
 module.exports = survey => {
+  const baseUrl = process.env.DOMAIN || process.env.APP_BASE_URL || 'http://localhost:5000';
+
   return `
   <html>
     <body>
@@ -8,10 +9,10 @@ module.exports = survey => {
         <p>Please answer the following question:</p>
         <p>${survey.body}</p>
         <div>
-          <a href="${keys.domain}/api/surveys/${survey.id}/yes">Yes</a>
+          <a href="${baseUrl}/api/surveys/${survey.id}/yes">Yes</a>
         </div>
         <div>
-          <a href="${keys.domain}/api/surveys/${survey.id}/no">No</a>
+          <a href="${baseUrl}/api/surveys/${survey.id}/no">No</a>
         </div>
       </div>
     </body>

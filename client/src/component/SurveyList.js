@@ -8,15 +8,24 @@ class SurveyList extends Component{
   	}
 
   	renderSurvey(){ //from db, id in mongoose should be _id; Date().toString()
+  		if (!this.props.surveys.length){
+  			return (
+  				<div className="empty-state">
+  					<p>No surveys yet.</p>
+  					<span>Create your first campaign with the plus button.</span>
+  				</div>
+  			);
+  		}
+
   		return [...this.props.surveys].reverse().map(survey => { //newest on the top
   			return(
-  				<div key={survey._id} className="card blue-grey">
-        			<div className="card-content white-text">
+  				<div key={survey._id} className="card survey-card">
+        			<div className="card-content survey-card-content">
           				<span className="card-title">{survey.title}</span>
           				<p>{survey.body}</p>
-          				<p className="right">Sent On: {new Date(survey.dateSent).toLocaleDateString()}</p>
+          				<p className="right survey-date">Sent On: {new Date(survey.dateSent).toLocaleDateString()}</p>
 			        </div>
-			        <div className="card-action grey-text text-lighten-3">
+			        <div className="card-action survey-card-action">
 			         	<p>Yes: {survey.yes} No: {survey.no}</p>
 			        </div>
 			    </div>

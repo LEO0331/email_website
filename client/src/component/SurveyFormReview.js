@@ -8,9 +8,9 @@ import * as actions from '../actions';
 const SurveyFormReview = ({onCancel, formValues, submitSurvey, history}) => { //this.props.onCancel
 	const reviewFields = _.map(FIELDS, field => {
 		return(
-			<div key={field.name}> 
+			<div key={field.name} className="review-row"> 
 				<label>{field.label}</label>
-				<div style={{marginBottom: '10px'}}> 
+				<div> 
 					{formValues[field.name]}
 				</div> 
 			</div> 
@@ -18,15 +18,17 @@ const SurveyFormReview = ({onCancel, formValues, submitSurvey, history}) => { //
 	});
 
 	return(
-		<div> 
+		<div className="survey-review"> 
 			<h4>Please confirm your entries</h4>
 			{reviewFields}
-			<button className="btn red" onClick={onCancel} style={{marginTop: '10px'}}>Back
-	    		<i className="material-icons right">backspace</i>
-	    	</button>
-	    	<button className="btn green right" onClick={() => submitSurvey(formValues, history)} style={{marginTop: '10px'}}>Send Survey
-	    		<i className="material-icons right">email</i>
-	    	</button>
+			<div className="form-actions">
+				<button className="btn-flat action-cancel" onClick={onCancel}>Back
+	    			<i className="material-icons right">backspace</i>
+	    		</button>
+	    		<button className="btn action-send" onClick={() => submitSurvey(formValues, history)}>Send Survey
+	    			<i className="material-icons right">email</i>
+	    		</button>
+			</div>
 	    </div> 
 	);
 };
