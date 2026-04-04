@@ -22,7 +22,7 @@ jobs:
         run: npm install
 
       - name: Install client dependencies
-        run: npm install --prefix client
+        run: npm install --prefix client --legacy-peer-deps
 
       - name: Run security audit (backend)
         run: npm audit --audit-level=moderate
@@ -60,7 +60,7 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
-        run: npm install && npm install --prefix client
+        run: npm install && npm install --prefix client --legacy-peer-deps
 
       - name: Build client
         run: npm run build --prefix client

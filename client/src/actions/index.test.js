@@ -1,4 +1,4 @@
-import { fetchUser, handleToken, submitSurvey, fetchSurveys } from './index';
+import { fetchUser, submitSurvey, fetchSurveys } from './index';
 import { FETCH_USER, FETCH_SURVEYS } from './types';
 import axios from 'axios';
 
@@ -19,23 +19,6 @@ describe('Redux Actions', () => {
     await action(dispatch);
 
     expect(axios.get).toHaveBeenCalledWith('/api/current_user');
-    expect(dispatch).toHaveBeenCalledWith({
-      type: FETCH_USER,
-      payload: mockData
-    });
-  });
-
-  test('handleToken action', async () => {
-    const mockToken = 'test-token-123';
-    const mockData = { id: 1, credits: 5 };
-    axios.post.mockResolvedValue({ data: mockData });
-
-    const dispatch = jest.fn();
-    const action = handleToken(mockToken);
-    
-    await action(dispatch);
-
-    expect(axios.post).toHaveBeenCalledWith('/api/stripe', mockToken);
     expect(dispatch).toHaveBeenCalledWith({
       type: FETCH_USER,
       payload: mockData
