@@ -7,6 +7,7 @@ const app = express();
 app.use(express.json());
 
 require('./routes/surveyRoutes')(app);
+require('./routes/authRoutes')(app);
 
 const clientBuildPath = path.join(__dirname, 'client/build');
 if (fs.existsSync(clientBuildPath)) {

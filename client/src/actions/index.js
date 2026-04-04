@@ -7,9 +7,8 @@ export const fetchUser = () => async dispatch => {
 };
 
 export const submitSurvey = (values, history) => async dispatch => {
-	const res = await axios.post('/api/surveys', values);
+	await axios.post('/api/surveys', values);
 	history.push('/surveys'); //route wanna nav to
-	dispatch({type: FETCH_USER, payload: res.data});
 };
 
 export const fetchSurveys = () => async dispatch => { 

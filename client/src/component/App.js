@@ -6,6 +6,8 @@ import Header from './Header';
 import Landing from './Landing';
 import Dashboard from './Dashboard';
 import SurveyNew from './SurveyNew';
+import SignIn from './SignIn';
+import SignOut from './SignOut';
 
 class App extends Component {
   componentDidMount(){ //AJAX
@@ -19,6 +21,9 @@ class App extends Component {
             <Header />
             <main className="page-content">
               <Route exact = {true} path="/" component={Landing} />
+              <Route exact path="/signin" component={SignIn} />
+              <Route exact path="/logout" component={SignOut} />
+              <Route exact path="/survey" component={Dashboard} />
               <Route exact path="/surveys" component={Dashboard} />
               <Route path="/surveys/new" component={SurveyNew} />
             </main>

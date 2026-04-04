@@ -1,5 +1,6 @@
 const Mailer = require('../services/Mailer');
 const surveyTemplate = require('../services/surveyTemplate');
+const { listSurveys, createSurvey } = require('../services/demoStore');
 
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const RATE_LIMIT_WINDOW_MS = Number(process.env.EMAIL_RATE_LIMIT_WINDOW_MS || 60000);
@@ -52,6 +53,50 @@ function normalizeRecipients(recipients) {
 }
 
 module.exports = app => {
+	app.get('/api/surveys', (req, res) => {
+		res.send(listSurveys());
+	});
+
+	app.post('/api/surveys', async (req, res) => {
+		const { title, subject, body, recipients } = req.body;
+		if (!title || !subject || !body) {
+			return res.status(400).send({ error: 'Title, subject, and body are required' });
+		}
+
+		const clientKey = getClientKey(req);
+		if (isRateLimited(clientKey)) {
+			return res.status(429).send({ error: 'Too many requests. Please wait and try again.' });
+		}
+
+		const recipientInput = Array.isArray(recipients)
+			? recipients
+			: String(recipients || '')
+					.split(',')
+					.map(item => item.trim())
+					.filter(Boolean);
+
+		const recipientValidation = normalizeRecipients(recipientInput);
+		if (recipientValidation.error) {
+			return res.status(400).send({ error: recipientValidation.error });
+		}
+
+		const survey = createSurvey({
+			title,
+			subject,
+			body,
+			recipients: recipientValidation.recipients,
+		});
+
+		try {
+			const mailer = new Mailer(survey, surveyTemplate(survey));
+			await mailer.send();
+		} catch (error) {
+			console.error('Survey created but email send failed:', error);
+		}
+
+		res.send(survey);
+	});
+
 	// Optional endpoint: Send email for a survey (called from frontend)
 	app.post('/api/surveys/send-email', async (req, res) => {
 		const { title, subject, body, recipients } = req.body;

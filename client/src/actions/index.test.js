@@ -46,8 +46,7 @@ describe('Redux Actions', () => {
 
   test('submitSurvey action', async () => {
     const mockValues = { title: 'Test', subject: 'Subject' };
-    const mockResponse = { id: 1, email_sent: true };
-    axios.post.mockResolvedValue({ data: mockResponse });
+    axios.post.mockResolvedValue({ data: { ok: true } });
 
     const dispatch = jest.fn();
     const history = { push: jest.fn() };
@@ -57,10 +56,7 @@ describe('Redux Actions', () => {
 
     expect(axios.post).toHaveBeenCalledWith('/api/surveys', mockValues);
     expect(history.push).toHaveBeenCalledWith('/surveys');
-    expect(dispatch).toHaveBeenCalledWith({
-      type: FETCH_USER,
-      payload: mockResponse
-    });
+    expect(dispatch).not.toHaveBeenCalled();
   });
 
   test('handle API errors', async () => {

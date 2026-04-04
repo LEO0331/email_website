@@ -10,13 +10,13 @@ class Header extends Component{
 			case false:
 				return (
 					<li>
-						<a className="nav-link nav-cta" href="/auth/google">Login with Google</a>
+						<Link className="nav-link nav-cta" to="/signin">Sign in</Link>
 					</li>
 				);
 			default:
 				return [ //https://flaviocopes.com/jsx-return-multiple-elements/
 					<li key="1" className="nav-credits">Signed in</li>,
-					<li key="2"><a className="nav-link" href="/api/logout">Logout</a></li>
+					<li key="2"><Link className="nav-link" to="/logout">Logout</Link></li>
 				];
 		}
 	}
