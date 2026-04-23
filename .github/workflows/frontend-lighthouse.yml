@@ -1,0 +1,60 @@
+name: Frontend Lighthouse
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "client/**"
+      - ".github/workflows/frontend-lighthouse.yml"
+      - ".lighthouserc.json"
+  push:
+    branches:
+      - main
+    paths:
+      - "client/**"
+      - ".github/workflows/frontend-lighthouse.yml"
+      - ".lighthouserc.json"
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            client/package-lock.json
+
+      - name: Install client dependencies
+        run: npm ci --prefix client --legacy-peer-deps
+
+      - name: Build client
+        run: npm run build --prefix client
+
+      - name: Run Lighthouse CI
+        run: npx @lhci/cli@0.15.x autorun --config=.lighthouserc.json
+
+      - name: Add temporary dashboard URLs to summary
+        if: always()
+        run: |
+          if [ -f .lighthouseci/links.json ]; then
+            node -e "const fs=require('fs'); const links=JSON.parse(fs.readFileSync('.lighthouseci/links.json','utf8')); console.log('## Lighthouse Temporary Dashboard'); console.log(''); links.forEach((url, i)=>console.log((i+1)+'. '+url));" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "## Lighthouse Temporary Dashboard" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "No temporary URLs were generated." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload Lighthouse artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-report
+          path: .lighthouseci

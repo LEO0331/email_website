@@ -66,6 +66,13 @@ a {
   margin-top: 2rem;
 }
 
+.route-loading {
+  min-height: 120px;
+  display: grid;
+  place-items: center;
+  color: var(--text-soft);
+}
+
 .site-nav {
   background: transparent;
   box-shadow: none;
@@ -613,5 +620,16 @@ a {
   .action-next,
   .action-send {
     width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
   }
 }
