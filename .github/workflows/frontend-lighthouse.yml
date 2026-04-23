@@ -45,7 +45,7 @@ jobs:
         if: always()
         run: |
           if [ -f .lighthouseci/links.json ]; then
-            node -e "const fs=require('fs'); const links=JSON.parse(fs.readFileSync('.lighthouseci/links.json','utf8')); console.log('## Lighthouse Temporary Dashboard'); console.log(''); links.forEach((url, i)=>console.log((i+1)+'. '+url));" >> "$GITHUB_STEP_SUMMARY"
+            node -e "const fs=require('fs'); const raw=JSON.parse(fs.readFileSync('.lighthouseci/links.json','utf8')); const rows=Array.isArray(raw) ? raw.map((url,i)=>({label:'Run '+(i+1),url})) : Object.entries(raw).map(([page,url])=>({label:page,url})); console.log('## Lighthouse Temporary Dashboard'); console.log(''); if (!rows.length) { console.log('No temporary URLs were generated.'); } else { rows.forEach((row,i)=>console.log((i+1)+'. '+row.label+' -> '+row.url)); }" >> "$GITHUB_STEP_SUMMARY"
           else
             echo "## Lighthouse Temporary Dashboard" >> "$GITHUB_STEP_SUMMARY"
             echo "" >> "$GITHUB_STEP_SUMMARY"
