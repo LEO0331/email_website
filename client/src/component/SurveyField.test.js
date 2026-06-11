@@ -59,6 +59,14 @@ describe('SurveyField Component', () => {
   });
 
   test('input has correct placeholder', () => {
+    render(
+      <SurveyField
+        input={mockInput}
+        label="Test Label"
+        meta={mockMeta}
+      />
+    );
+
     const input = screen.getByPlaceholderText('Test Label');
     expect(input).toHaveAttribute('placeholder', 'Test Label');
   });

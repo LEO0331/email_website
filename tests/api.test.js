@@ -14,8 +14,10 @@
 
     expect(app.get).toHaveBeenCalled();
     expect(res.send).toHaveBeenCalledWith({
+      object: 'health_check',
       status: 'ok',
       message: 'Survey app is running',
+      request_id: null,
     });
   });
 
@@ -45,7 +47,14 @@
     await routes['/api/surveys/send-email'](req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.send).toHaveBeenCalledWith({ error: 'No recipients provided' });
+    expect(res.send).toHaveBeenCalledWith({
+      error: expect.objectContaining({
+        type: 'validation_error',
+        code: 'missing_required_param',
+        message: 'No recipients provided',
+        param: 'recipients',
+      }),
+    });
   });
 
   test('POST /api/surveys/send-email rejects empty recipients array', async () => {
@@ -75,7 +84,14 @@
     await routes['/api/surveys/send-email'](req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.send).toHaveBeenCalledWith({ error: 'No recipients provided' });
+    expect(res.send).toHaveBeenCalledWith({
+      error: expect.objectContaining({
+        type: 'validation_error',
+        code: 'missing_required_param',
+        message: 'No recipients provided',
+        param: 'recipients',
+      }),
+    });
   });
 
   test('surveyTemplate uses DOMAIN when provided', () => {

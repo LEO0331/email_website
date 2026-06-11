@@ -2,9 +2,11 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 require('dotenv').config();
+const requestContext = require('./middlewares/requestContext');
 
 const app = express();
 app.use(express.json());
+app.use(requestContext);
 
 require('./routes/surveyRoutes')(app);
 require('./routes/authRoutes')(app);

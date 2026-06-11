@@ -44,6 +44,28 @@ describe('Redux Actions', () => {
     });
   });
 
+  test('fetchSurveys action unwraps list envelope responses', async () => {
+    const mockSurveys = [{ id: 1, title: 'Survey 1' }];
+    axios.get.mockResolvedValue({
+      data: {
+        object: 'list',
+        data: mockSurveys,
+        has_more: false,
+        url: '/api/surveys',
+      },
+    });
+
+    const dispatch = jest.fn();
+    const action = fetchSurveys();
+
+    await action(dispatch);
+
+    expect(dispatch).toHaveBeenCalledWith({
+      type: FETCH_SURVEYS,
+      payload: mockSurveys
+    });
+  });
+
   test('submitSurvey action', async () => {
     const mockValues = { title: 'Test', subject: 'Subject' };
     axios.post.mockResolvedValue({ data: { ok: true } });
@@ -54,7 +76,15 @@ describe('Redux Actions', () => {
     
     await action(dispatch);
 
-    expect(axios.post).toHaveBeenCalledWith('/api/surveys', mockValues);
+    expect(axios.post).toHaveBeenCalledWith(
+      '/api/surveys',
+      mockValues,
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          'Idempotency-Key': expect.any(String),
+        }),
+      })
+    );
     expect(history.push).toHaveBeenCalledWith('/surveys');
     expect(dispatch).not.toHaveBeenCalled();
   });
@@ -64,11 +94,12 @@ describe('Redux Actions', () => {
 
     const dispatch = jest.fn();
     const action = fetchUser();
-    
-    try {
-      await action(dispatch);
-    } catch (error) {
-      expect(error.message).toBe('API Error');
-    }
+
+    await action(dispatch);
+
+    expect(dispatch).toHaveBeenCalledWith({
+      type: FETCH_USER,
+      payload: false
+    });
   });
 });

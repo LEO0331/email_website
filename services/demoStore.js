@@ -31,15 +31,21 @@ function listSurveys() {
 }
 
 function createSurvey({ title, subject, body, recipients }) {
+  const now = new Date().toISOString();
   const survey = {
     _id: `survey-${surveyCounter++}`,
+    object: 'survey',
     title,
     subject,
     body,
     recipients,
     yes: 0,
     no: 0,
-    dateSent: new Date().toISOString(),
+    status: 'sent',
+    dateSent: now,
+    created: now,
+    updated: now,
+    metadata: {},
   };
 
   surveys.push(survey);
